@@ -1,0 +1,59 @@
+%function saidaf = AGfiss(cromo)
+
+%cromossomo de teste:
+cromo = [-30 -24.9 -19.2 -15.4 -11.2 -5 -2.2 0 2.02 5 10.6 14.8 18 22.8 30 -0.3 -0.23 -0.122 -0.05 0 0.044 0.104 0.144 0.3 1 2 1 2 3 1 1 2 3 1 2 1 3 2 3 0.01 3 0.01 3.5 0.1 5]
+%saidaf = 0;
+
+%
+
+b = newfis('tipper');  %cria um novo fis
+b.type = 'sugeno';      %mudo de mamdami para sugeno
+
+b = addvar(b,'input','erro',[cromo(1) cromo(15)]); % crio a entrada do erro
+% A seguir são especificados os paramentros das funções do erro
+b = addmf(b,'input',1,'NG','trimf',[cromo(1) cromo(2) cromo(4)]);  
+b = addmf(b,'input',1,'NP','trimf',[cromo(3) cromo(5) cromo(7)]);
+b = addmf(b,'input',1,'EZ','trimf',[cromo(6) cromo(8) cromo(10)]);
+b = addmf(b,'input',1,'PP','trimf',[cromo(9) cromo(11) cromo(13)]);
+b = addmf(b,'input',1,'PG','trimf',[cromo(12) cromo(14) cromo(15)]);
+
+b = addvar(b,'input','var_erro',[cromo(16) cromo(24)]); % crio a entrada da variação do erro
+% A seguir são especificados os paramentros das funções da variação do erro
+b = addmf(b,'input',2,'VP','trimf',[cromo(16) cromo(17) cromo(19)]);
+b = addmf(b,'input',2,'VZ','trimf',[cromo(18) cromo(20) cromo(22)]);
+b = addmf(b,'input',2,'VG','trimf',[cromo(21) cromo(23) cromo(24)]);
+
+b = addvar(b,'output','saidaFuzzy',[0 1]);  % crio a saida do controle
+b = addmf(b,'output',1,'GUP','linear',[cromo(40) cromo(41) 0]);
+b = addmf(b,'output',1,'GUM','linear',[cromo(42) cromo(43) 0]);
+b = addmf(b,'output',1,'GUG','linear',[cromo(44) cromo(45) 0]);
+
+%especifico as regras;
+%primeira coluna é referente as funções do erro
+%segunda coluna referente as funções da variação do erro
+%a terceira coluna é referente a saida do controle
+%a quarta e quinta não varia, sempre é 1 e 1
+ruleList = [1 1 cromo(25) 1 1;
+            1 2 cromo(26) 1 1;
+            1 3 cromo(27) 1 1;
+            2 1 cromo(28) 1 1;
+            2 2 cromo(29) 1 1;
+            2 3 cromo(30) 1 1;
+            3 1 cromo(31) 1 1
+            3 2 cromo(32) 1 1;
+            3 3 cromo(33) 1 1;
+            4 1 cromo(34) 1 1;
+            4 2 cromo(35) 1 1;
+            4 3 cromo(36) 1 1
+            5 1 cromo(37) 1 1;
+            5 2 cromo(38) 1 1
+            5 3 cromo(39) 1 1];
+                
+            
+b = addrule(b,ruleList);
+
+%sug_fis = mam2sug(b)  %transforma de mamdani para sugeno
+
+writefis(b,'my_file');   %crio o aquivo .fis
+
+%end
